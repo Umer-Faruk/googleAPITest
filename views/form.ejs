@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+  <title>warranty remainder</title>
+  <style>
+    div {
+      height: 200px;
+      width: 50%;
+      background-color: powderblue;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      padding-left: 2px;
+      object-fit: cover;
+    }
+
+
+    .float {
+      position: fixed;
+      width: 60px;
+      height: 60px;
+      bottom: 40px;
+      right: 40px;
+      background-color: #0C9;
+      color: #FFF;
+      border-radius: 50px;
+      text-align: center;
+      box-shadow: 2px 2px 3px #999;
+ }
+
+ .my-float {
+      margin-top: 10px;
+ }
+  </style>
+
+</head>
+
+<body>
+
+  <a href="/view" class="float" >
+    <i class="fa fa-eye my-float fa-2x" aria-hidden="true"></i>
+    </a>
+  
+  
+
+  <!-- old -->
+
+  <form action="/upload" method="post" enctype="multipart/form-data">
+
+    <!-- prodact image -->
+    <label for="prodact">product image</label>
+    <input type="file" name="prodact" id="prodact" accept="image/*">
+    <div id="i1">
+
+    </div>
+    <br><br>
+
+    <label for="bill">bill </label>
+    <input type="file" name="bill" id="bill" accept="image/*"><br>
+    <div id="i2">
+
+    </div>
+
+    <br>
+
+    <label for="ptag">product tag</label>
+
+    <input type="text" list="ptag" />
+    <datalist id="ptag">
+      <option>electronics</option>
+      <option>tag2</option>
+      <option>tag3</option>
+      <option>tag4</option>
+    </datalist>
+
+    <br><br>
+
+    <label for="pname">product name</label>
+    <input type="text" name="pname" id="pname"><br>
+
+    <label for="pprice">product price</label>
+    <input type="number" name="pprice" id="pprice"><br>
+
+    <label for="pbdate">buying date</label>
+    <input type="date" name="pbdate" id="pbdate"><br>
+
+    <label for="warrentyp">warranty period </label>
+    <input type="number" name="warrentyp" id="warrentyp">
+
+    <select name="pered" id="pered">
+      <option value="year">Year's</option>
+      <option value="mounth">Mounth's</option>
+    </select>
+    <br>
+
+    <label for="wenddate">warranty end date </label>
+    <p id="wendon"> warranty ends on</p>
+
+    <br><br>
+
+
+    <label for="location">shop location</label>
+    <input type="text" name="location" id="location"><br>
+
+
+
+    <br><br>
+
+    <label for="recognition-progress">File recognition progress:</label>
+
+    <progress id="recognition-progress" max="100" value="0">0%</progress>
+
+    <input type="submit" value="sublit">
+
+  </form>
+
+
+
+
+
+  </div>
+
+</body>
+
+
+
+<script>
+
+  window.onload = function () {
+
+
+
+
+    /**var oneYearFromNow = new Date();
+    var wp = document.getElementById("warrentyp");
+    
+    oneYearFromNow.setFullYear(oneYearFromNow.getFullYear()+ v);
+    
+    wp.addEventListener('change',function(e){
+      var wrentyed = document.getElementById("wendon");
+      //wrentyed.innerHTML= oneYearFromNow.getDate()+"/"+oneYearFromNow.getMonth()+"/"+oneYearFromNow.getFullYear()+parseInt(wp.value);
+      //wrentyed.innerHTML= ;
+
+    });*/
+
+
+
+
+    var proi1 = document.getElementById("prodact");
+    var poro1 = document.getElementById("i1");
+
+    var billi1 = document.getElementById("bill");
+    var billo1 = document.getElementById("i2");
+
+
+
+
+    proi1.addEventListener('change', function (e) {
+      var file = proi1.files[0];
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+
+
+      reader.onload = function (e) {
+        var img = new Image();
+        img.src = reader.result;
+        poro1.appendChild(img);
+      }
+
+
+
+
+    });
+
+    billi1.addEventListener('change', function () {
+      var file = billi1.files[0];
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+
+
+      reader.onload = function (e) {
+        var img = new Image();
+        img.src = reader.result;
+        billo1.appendChild(img);
+      }
+    });
+
+  }
+</script>
+
+
+
+
+<style>
+  .card {
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+  }
+
+  /* On mouse-over, add a deeper shadow */
+  .card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  /* Add some padding inside the card container */
+  .container {
+    padding: 2px 16px;
+  }
+</style>
+
+</html>

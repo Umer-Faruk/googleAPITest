@@ -1,61 +1,29 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Node Authentication</title>
-    <link
-      rel="stylesheet"
-      href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
-    />
-    <style>
-      body {
-        padding-top: 80px;
-        word-wrap: break-word;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <div class="page-header text-center">
-        <h1><span class="fa fa-anchor"></span> Profile Page</h1>
-        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+<%- include('partials/header') %>
+
+
+
+<div class="container">
+
+  <div class="col-sm-6">
+    <div class="well">
+      <h3 class="text-danger">
+        <span class="fa fa-google-plus"></span> Upload File to Google
+        Drive
+      </h3>
+
+      <% if (success) { %>
+      <div class="alert alert-success alert-dismissible">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
+        <strong>Success!</strong> Your Image File is Uploaded.
       </div>
+      <%}%>
+<form action="/calander" method="POST" enctype="multipart/form-data">
+  <div class="form-group">
+    <button class="btn btn-block btn-danger">
+      Calander Test
+    </button>
+</form>
 
-      <div class="row">
-        <!-- GOOGLE INFORMATION -->
-        <div class="col-sm-6">
-          <div class="well">
-            <h3 class="text-danger">
-              <span class="fa fa-google-plus"></span> Google
-            </h3>
-
-            <p>
-              <strong>name</strong>: <%= name %>
-              <br />
-              <strong>pic:</strong>:
-              <img src="<%=pic%>" width="200" height="200" alt="" />
-            </p>
-          </div>
-        </div>
-
-        <div class="col-sm-6">
-          <div class="well">
-            <h3 class="text-danger">
-              <span class="fa fa-google-plus"></span> Upload File to Google
-              Drive
-            </h3>
-
-            <% if (success) { %>
-            <div class="alert alert-success alert-dismissible">
-              <a href="#" class="close" data-dismiss="alert" aria-label="close"
-                >×</a
-              >
-              <strong>Success!</strong> Your Image File is Uploaded.
-            </div>
-            <%}%>
             <form action="/upload" method="POST" enctype="multipart/form-data">
               <div class="form-group">
                 <input
@@ -66,20 +34,166 @@
                   id=""
                 />
               </div>
+<!--  -->
+              <div class="form-group">
+                <label for="prodact">product image</label>
+                <input type="file" name="prodact" id="prodact" accept="image/*">
+              <div id="i1">
+
+               </div>
+              </div>
+<!--  -->
+              <div class="form-group">
+                <label for="bill">bill image</label>
+              <input type="file" name="bill" id="bill" accept="image/*"><br>
+                <div id="i2">
+
+                </div>
+              </div>
+<!--  -->
+
+
+              <div class="form-group">
+                <label for="ptag">product tag</label>
+
+                <input type="text" list="ptag" />
+                <datalist id="ptag">
+                  <option>electronics</option>
+                  <option>tag2</option>
+                  <option>tag3</option>
+                  <option>tag4</option>
+                </datalist>
+              </div>
+<!--  -->
+
+              <div class="form-group">
+                <label for="pname">product name</label>
+                <input type="text" name="pname" id="pname"><br>
+              </div>
+              <div class="form-group">
+                <label for="pprice">product price</label>
+                <input type="number" name="pprice" id="pprice"><br>
+              </div>
+            
+              <div class="form-group">
+                <label for="pbdate">buying date</label>
+                <input type="date" name="pbdate" id="pbdate"><br>
+              </div>
+            
+              <div class="form-group"> 
+                <label for="warrentyp">warranty period </label>
+                <input type="number" name="warrentyp" id="warrentyp">
+              
+             
+                <select name="pered" id="pered">
+                  <option value="year">Year's</option>
+                  <option value="mounth">Mounth's</option>
+                </select>
+
+              </div>
+
+
+              
               <div class="form-group">
                 <button class="btn btn-block btn-danger">
                   Upload File
                 </button>
               </div>
+               
             </form>
           </div>
         </div>
-      </div>
+
+         
+         
+</div>
+<br>
+<br>
+
+<!-- <div class="well">
+
+
+  <div class="clock-input">
+    <input type="date" name="time-to" class="time-to" id="time-to" value="" onchange="calcTime(this.value)">
+  </div>
+  <div class="ccontainer">
+    <div class="clock-column">
+      <p class="clock-day clock-timer"></p>
+      <p class="clock-label">Days</p>
     </div>
-  </body>
+  
+    <div class="clock-column">
+      <p class="clock-hours clock-timer"></p>
+      <p class="clock-label">Hours</p>
+    </div>
+  
+    <div class="clock-column">
+      <p class="clock-minutes clock-timer"></p>
+      <p class="clock-label">Minutes</p>
+    </div>
+  
+    <div class="clock-column">
+      <p class="clock-seconds clock-timer"></p>
+      <p class="clock-label">Seconds</p>
+    </div>
+  </div>
+</div>
+   -->
+
+   
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-</html>
 
 
+  <script>
+    var timeTo = document.getElementById('time-to').value,
+      date,
+      now = new Date(),
+      newYear = new Date('1.1.2020').getTime(),
+      startTimer = '';
 
+    // calculate date, hour, minute and second
+    function calcTime(dates) {
+      //ui variables
+      clearInterval(startTimer);
+
+      if (typeof (dates) == 'undefined') {
+        date = new Date(newYear).getTime();
+      } else {
+        date = new Date(dates).getTime();
+      }
+
+      function updateTimer(date) {
+
+        var now = new Date().getTime();
+        var distance = date - now;
+
+        // Time calculations for days, hours, minutes and seconds
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // select element
+        document.querySelector('.clock-day').innerHTML = days;
+        document.querySelector('.clock-hours').innerHTML = hours;
+        document.querySelector('.clock-minutes').innerHTML = minutes;
+        document.querySelector('.clock-seconds').innerHTML = seconds;
+
+        if (now >= date) {
+          clearInterval(startTimer);
+          document.querySelector('.clock-day').innerHTML = 'D';
+          document.querySelector('.clock-hours').innerHTML = 'O';
+          document.querySelector('.clock-minutes').innerHTML = 'N';
+          document.querySelector('.clock-seconds').innerHTML = 'E';
+        }
+      }
+
+      startTimer = setInterval(function () { updateTimer(date); }, 1000);
+
+    }
+
+  </script>
+ 
+ 

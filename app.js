@@ -1,28 +1,22 @@
 const fs = require("fs");
 const express = require("express");
 const multer = require("multer");
-const OAuth2Data = require("./credentials.json");
-var name,pic
 
-const { google } = require("googleapis");
+const utils = require("./Oauthmodule");
+const driveutils = require("./Drivmodule");
+const calendarutils = require("./Calendarutils");
+
+var name, pic
+
+
 
 const app = express();
 
 
-const CLIENT_ID = OAuth2Data.web.client_id;
-const CLIENT_SECRET = OAuth2Data.web.client_secret;
-const REDIRECT_URL = OAuth2Data.web.redirect_uris[0];
 
-const oAuth2Client = new google.auth.OAuth2(
-  CLIENT_ID,
-  CLIENT_SECRET,
-  REDIRECT_URL
-);
 var authed = false;
 
-// If modifying these scopes, delete token.json.
-const SCOPES =
-  "https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile";
+
 
 app.set("view engine", "ejs");
 
@@ -41,18 +35,12 @@ var upload = multer({
 
 app.get("/", (req, res) => {
   if (!authed) {
-    // Generate an OAuth URL and redirect there
-    var url = oAuth2Client.generateAuthUrl({
-      access_type: "offline",
-      scope: SCOPES,
-    });
-    console.log(url);
+    //Generate an OAuth URL and redirect there
+    var url = utils.gEtURL();
     res.render("index", { url: url });
-  } else {
-    var oauth2 = google.oauth2({
-      auth: oAuth2Client,
-      version: "v2",
-    });
+  }
+  else {
+    var oauth2 = utils.oauth2();
     oauth2.userinfo.get(function (err, response) {
       if (err) {
         console.log(err);
@@ -63,74 +51,120 @@ app.get("/", (req, res) => {
         res.render("success", {
           name: response.data.name,
           pic: response.data.picture,
-          success:false
+          success: false
         });
       }
     });
   }
 });
 
+
+
 app.post("/upload", (req, res) => {
-  upload(req, res, function (err) {
+  upload(req, res, async function (err) { 
     if (err) {
       console.log(err);
       return res.end("Something went wrong");
-    } else {
-      console.log(req.file.path);
-      const drive = google.drive({ version: "v3",auth:oAuth2Client  });
-      const fileMetadata = {
-        name: req.file.filename,
-      };
-      const media = {
-        mimeType: req.file.mimetype,
-        body: fs.createReadStream(req.file.path),
-      };
-      drive.files.create(
-        {
-          resource: fileMetadata,
-          media: media,
-          fields: "id",
-        },
-        (err, file) => {
-          if (err) {
-            // Handle error
-            console.error(err);
-          } else {
-            fs.unlinkSync(req.file.path)
-            res.render("success",{name:name,pic:pic,success:true})
-          }
-
-        }
-      );
     }
+    else {
+
+      console.log(req.file.path);
+      var FID = await driveutils.iSfolderExist();
+      console.log("FID" + FID);
+
+      if (FID != '') {
+
+
+        const fileMetadata = {
+          name: req.file.filename,
+          parents: [FID],
+        };
+        const media = {
+          mimeType: req.file.mimetype,
+          body: fs.createReadStream(req.file.path),
+        };
+
+        const resdata = driveutils.sEndFile(fileMetadata, media);
+        if (resdata != err) {
+
+          fs.unlinkSync(req.file.path)
+          //     //console.log(file);
+          res.render("success", { name: name, pic: pic, success: true })
+        }
+ 
+      }
+    }
+
   });
 });
 
-app.get('/logout',(req,res) => {
-    authed = false
-    res.redirect('/')
-})
+app.get('/logout', (req, res) => {
+  authed = false
+  res.redirect('/')
+});
 
 app.get("/google/callback", function (req, res) {
   const code = req.query.code;
   if (code) {
-    // Get an access token based on our OAuth code
-    oAuth2Client.getToken(code, function (err, tokens) {
-      if (err) {
-        console.log("Error authenticating");
-        console.log(err);
-      } else {
-        console.log("Successfully authenticated");
-        console.log(tokens)
-        oAuth2Client.setCredentials(tokens);
+    
+    // Check if we have previously stored a token.
+    fs.readFile(utils.TOKEN_PATH, (err, token) => {
+      if (err){
+        utils.oAuth2Client.getToken(code, function (err, tokens) {
+          if (err) {
+            console.log("Error authenticating");
+            console.log(err);
+          } else {
+            console.log("Successfully authenticated");
+    
+            console.log(tokens)
+            utils.sToreToken(tokens);
+    
+    
+            utils.oAuth2Client.setCredentials(tokens);
+    
+    
+            authed = true;
+            res.redirect("/");
+          }
+        });
 
 
+      } 
+      else{
+
+        console.log("Reading token from file");
+        utils.oAuth2Client.setCredentials(JSON.parse(token));
         authed = true;
         res.redirect("/");
+        // callback(oAuth2Client);
       }
     });
+    // Get an access token based on our OAuth code
+    
   }
 });
+
+
+
+app.post("/calander", (req, res) => {
+  upload(req, res, async function (err) {
+    if (err) {
+      console.log(err);
+      return res.end("Something went wrong");
+    }
+    else {
+      await calendarutils.insertEvent();
+      calendarutils.calendareventList();
+
+      res.render("calendar")
+    }
+
+  });
+});
+
+
+
 
 app.listen(5000, () => {
   console.log("App is listening on Port 5000");
